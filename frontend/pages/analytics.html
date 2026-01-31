@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Analytics</title>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <main class="max-w-6xl mx-auto p-6 space-y-6">
+    <h1 class="text-2xl font-semibold">Analytics</h1>
+
+    <div id="cards" class="grid grid-cols-3 gap-4"></div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="p-4 rounded-2xl border border-slate-800 bg-slate-900">
+        <h2 class="font-semibold mb-2">Topics</h2>
+        <table class="w-full">
+          <thead class="text-slate-400 text-sm">
+            <tr>
+              <th class="text-left p-2">topic</th>
+              <th class="p-2 text-center">total_uses</th>
+              <th class="p-2 text-center">avg_rating</th>
+            </tr>
+          </thead>
+          <tbody id="topicsTable"></tbody>
+        </table>
+      </div>
+
+      <div>
+        <h2 class="font-semibold mb-2">Cache Efficiency</h2>
+        <div id="cacheBox"></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="../assets/js/analytics.js"></script>
+</body>
+</html>

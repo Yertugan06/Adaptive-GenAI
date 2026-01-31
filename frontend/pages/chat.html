@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Chat</title>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="font-semibold">Adaptive GenAI</div>
+
+      <nav class="flex items-center gap-3 text-sm">
+        <a class="text-slate-300 hover:text-white" href="./chat.html">Chat</a>
+        <a class="text-slate-300 hover:text-white" href="./feedback.html">Feedback</a>
+        <a class="text-slate-300 hover:text-white" href="./memory.html">Memory</a>
+        <a class="text-slate-300 hover:text-white" href="./analytics.html">Analytics</a>
+        <a class="text-slate-300 hover:text-white" href="./admin.html">Admin</a>
+        <a class="text-slate-300 hover:text-white" href="./profile.html">Profile</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <span id="userBadge" class="text-sm text-slate-300"></span>
+        <button id="logoutBtn" class="text-sm px-3 py-1 rounded-lg border border-slate-700 hover:border-slate-500">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6 space-y-4">
+    <div id="banner" class="hidden p-3 rounded-lg border border-amber-900 bg-amber-950/30 text-amber-200"></div>
+
+    <section id="chat" class="space-y-3"></section>
+
+    <!-- Feedback widget -->
+    <section id="feedbackBox" class="hidden p-4 rounded-2xl border border-slate-800 bg-slate-900">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold">Feedback required</h2>
+        <span id="fbTarget" class="text-xs text-slate-400"></span>
+      </div>
+
+      <div class="flex items-center gap-2 mb-3">
+        <label class="text-sm text-slate-300">Rating:</label>
+        <select id="rating" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1">
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+      </div>
+
+      <textarea id="comment" rows="3" placeholder="Optional comment..."
+        class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 outline-none focus:border-slate-600"></textarea>
+
+      <button id="sendFeedbackBtn"
+        class="mt-3 px-4 py-2 rounded-lg bg-slate-100 text-slate-950 font-semibold hover:opacity-90">
+        Submit feedback
+      </button>
+
+      <div id="fbError" class="hidden mt-2 text-sm text-red-300"></div>
+    </section>
+
+    <!-- Prompt input -->
+    <section class="p-4 rounded-2xl border border-slate-800 bg-slate-900">
+      <div class="flex gap-2">
+        <input id="promptInput" type="text" placeholder="Type your prompt..."
+          class="flex-1 rounded-lg bg-slate-950 border border-slate-800 px-3 py-2 outline-none focus:border-slate-600" />
+        <button id="sendPromptBtn"
+          class="px-4 py-2 rounded-lg bg-slate-100 text-slate-950 font-semibold hover:opacity-90">
+          Send
+        </button>
+      </div>
+      <div class="mt-2 text-xs text-slate-400">
+        Feedback must be submitted before sending the next prompt.
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../assets/js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Feedback History</title>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <main class="max-w-5xl mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-4">Feedback History</h1>
+
+    <table class="w-full border border-slate-800 rounded-lg overflow-hidden">
+      <thead class="bg-slate-900">
+        <tr>
+          <th class="p-3 text-left">Prompt</th>
+          <th class="p-3 text-center">Rating</th>
+          <th class="p-3 text-center">Date</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </main>
+
+  <script type="module" src="../assets/js/feedback.js"></script>
+</body>
+</html>
