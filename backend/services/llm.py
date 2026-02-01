@@ -1,5 +1,5 @@
 from google import genai
-from backend.config import settings
+from backend.core.config import settings
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
 

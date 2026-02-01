@@ -1,6 +1,6 @@
 .venv/
-.env
+backend/.env
 .vscode/
 __pycache__/
 tempCodeRunnerFile.py
-backend/models/
+backend/ml_models/
