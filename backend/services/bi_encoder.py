@@ -6,8 +6,8 @@ from transformers import AutoTokenizer, AutoModel
 from typing import List
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model = AutoModel.from_pretrained("backend/models/multilingual-e5-base").to(device)
-tokenizer = AutoTokenizer.from_pretrained("backend/models/multilingual-e5-base")
+model = AutoModel.from_pretrained("backend/ml_models/multilingual-e5-base").to(device)
+tokenizer = AutoTokenizer.from_pretrained("backend/ml_models/multilingual-e5-base")
 
 def average_pool(last_hidden_states: Tensor,
                  attention_mask: Tensor) -> Tensor:

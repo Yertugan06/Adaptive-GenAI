@@ -4,7 +4,7 @@ from typing import List
 
 
 model = CrossEncoder(
-    "./backend/models/bge-reranker-v2-m3",
+    "./backend/ml_models/bge-reranker-v2-m3",
     activation_fn=nn.Sigmoid()
 )
 

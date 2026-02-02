@@ -1,8 +1,7 @@
 from typing import Annotated, Optional
-from datetime import datetime
+from datetime import datetime, UTC
 from bson import ObjectId
-from pydantic import BaseModel, Field, BeforeValidator, PlainSerializer
-
+from pydantic import BaseModel, Field, BeforeValidator, PlainSerializer, ConfigDict
 
 PyObjectId = Annotated[
     str, 
@@ -14,15 +13,20 @@ class PromptEvent(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
 
     prompt_text: str
-    rating: Optional[int] = None
+    rating: Optional[int] = Field(None, ge=1, le=5)
 
     used_cached_answer: bool = False
 
-    user_id: int        # Reference to SQL users.id
-    company_id: int     # Reference to SQL companies.id
+    user_id: int        #SQL User table
+    company_id: int     #SQL Company table
 
-    # Reference to the specific AIResponse doc in Mongo
     ai_response_id: Optional[PyObjectId] = None
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     schema_version: int = 1
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True
+    )
