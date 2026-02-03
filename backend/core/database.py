@@ -7,7 +7,7 @@ from backend.core.config import settings
 engine = create_engine(settings.POSTGRES_URI, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_db() -> Generator[Session, None, None]:
+def get_sql_db() -> Generator[Session, None, None]:
     """FastAPI Dependency for SQL sessions."""
     db = SessionLocal()
     try:
