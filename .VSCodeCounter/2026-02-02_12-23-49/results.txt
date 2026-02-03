@@ -1,0 +1,86 @@
+Date : 2026-02-02 12:23:49
+Directory : d:\Repositories\Adaptive GenAI
+Total : 45 files,  1170 codes, 34 comments, 286 blanks, all 1490 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| JavaScript       |         10 |        516 |          5 |        121 |        642 |
+| Python           |         26 |        351 |         27 |        120 |        498 |
+| HTML             |          7 |        260 |          2 |         44 |        306 |
+| pip requirements |          2 |         43 |          0 |          1 |         44 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                   | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                      |         45 |      1,170 |         34 |        286 |      1,490 |
+| . (Files)                                                              |          1 |          1 |          0 |          0 |          1 |
+| backend                                                                |         27 |        393 |         27 |        121 |        541 |
+| backend (Files)                                                        |          3 |         63 |          2 |         10 |         75 |
+| backend\api                                                            |          5 |          0 |          0 |          5 |          5 |
+| backend\core                                                           |          3 |         48 |          6 |         17 |         71 |
+| backend\crud                                                           |          2 |          0 |          0 |          2 |          2 |
+| backend\schemas                                                        |          9 |        140 |          4 |         44 |        188 |
+| backend\schemas\nosql                                                  |          3 |         76 |          0 |         28 |        104 |
+| backend\schemas\sql                                                    |          6 |         64 |          4 |         16 |         84 |
+| backend\services                                                       |          5 |        142 |         15 |         43 |        200 |
+| frontend                                                               |         17 |        776 |          7 |        165 |        948 |
+| frontend\assets                                                        |         10 |        516 |          5 |        121 |        642 |
+| frontend\assets\js                                                     |         10 |        516 |          5 |        121 |        642 |
+| frontend\pages                                                         |          7 |        260 |          2 |         44 |        306 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                               | language         | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| d:\Repositories\Adaptive GenAI\backend\__init__.py                     | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\api\analytics.py                | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\api\auth.py                     | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\api\feedback.py                 | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\api\prompts.py                  | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\api\responses.py                | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\core\config.py                  | Python           |         16 |          2 |          7 |         25 |
+| d:\Repositories\Adaptive GenAI\backend\core\database.py                | Python           |         32 |          4 |          9 |         45 |
+| d:\Repositories\Adaptive GenAI\backend\core\security.py                | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\crud\ai_crud.py                 | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\crud\user_crud.py               | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\main.py                         | Python           |         21 |          2 |          8 |         31 |
+| d:\Repositories\Adaptive GenAI\backend\requirements.txt                | pip requirements |         42 |          0 |          1 |         43 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\nosql\ai_response.py    | Python           |         29 |          0 |         12 |         41 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\nosql\document_chunk.py | Python           |         24 |          0 |          7 |         31 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\nosql\prompt_event.py   | Python           |         23 |          0 |          9 |         32 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\__init.py           | Python           |         12 |          0 |          2 |         14 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\base.py             | Python           |          3 |          0 |          1 |          4 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\company.py          | Python           |         12 |          1 |          3 |         16 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\events.py           | Python           |         13 |          1 |          4 |         18 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\metrics.py          | Python           |         12 |          1 |          3 |         16 |
+| d:\Repositories\Adaptive GenAI\backend\schemas\sql\user.py             | Python           |         12 |          1 |          3 |         16 |
+| d:\Repositories\Adaptive GenAI\backend\services\__init__.py            | Python           |          0 |          0 |          1 |          1 |
+| d:\Repositories\Adaptive GenAI\backend\services\bi_encoder.py          | Python           |         33 |          1 |         11 |         45 |
+| d:\Repositories\Adaptive GenAI\backend\services\cross_encoder.py       | Python           |         43 |         11 |         17 |         71 |
+| d:\Repositories\Adaptive GenAI\backend\services\llm.py                 | Python           |         11 |          0 |          3 |         14 |
+| d:\Repositories\Adaptive GenAI\backend\services\rag_pipeline.py        | Python           |         55 |          3 |         11 |         69 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\admin.js             | JavaScript       |         64 |          1 |         13 |         78 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\analytics.js         | JavaScript       |         47 |          0 |         10 |         57 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\api.js               | JavaScript       |         45 |          0 |         13 |         58 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\auth.js              | JavaScript       |         11 |          0 |          4 |         15 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\chat.js              | JavaScript       |        177 |          4 |         34 |        215 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\config.js            | JavaScript       |          1 |          0 |          1 |          2 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\feedback.js          | JavaScript       |         22 |          0 |          7 |         29 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\login.js             | JavaScript       |         35 |          0 |         10 |         45 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\memory.js            | JavaScript       |         89 |          0 |         22 |        111 |
+| d:\Repositories\Adaptive GenAI\frontend\assets\js\profile.js           | JavaScript       |         25 |          0 |          7 |         32 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\admin.html               | HTML             |         30 |          0 |          7 |         37 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\analytics.html           | HTML             |         35 |          0 |          5 |         40 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\chat.html                | HTML             |         71 |          2 |         12 |         85 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\feedback.html            | HTML             |         25 |          0 |          3 |         28 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\login.html               | HTML             |         33 |          0 |          6 |         39 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\memory.html              | HTML             |         49 |          0 |          9 |         58 |
+| d:\Repositories\Adaptive GenAI\frontend\pages\profile.html             | HTML             |         17 |          0 |          2 |         19 |
+| d:\Repositories\Adaptive GenAI\requirements.txt                        | pip requirements |          1 |          0 |          0 |          1 |
+| Total                                                                  |                  |      1,170 |         34 |        286 |      1,490 |
++------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

@@ -9,6 +9,7 @@ class User(Base):
     company_id = Column(Integer, ForeignKey("companies.id"))
     name = Column(String(100))
     role = Column(String(50))
+    password = Column(String(255)))
     created_at = Column(DateTime, server_default=func.now())
 
     # Relationships
