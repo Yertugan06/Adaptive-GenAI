@@ -23,7 +23,7 @@ def get_relevant_content(query: str, docs: List[str], threshold: float, top_n: i
 def rerank_documents(query: str, retrieved_docs: List[str], top_n=5) -> List[str]: 
     return get_relevant_content(query, retrieved_docs, threshold=0.25, top_n=top_n)
 
-def find_similarities(query: str, stored_questions: List[str], top_n=5) -> List[str]:
+def find_similarities(query: str, stored_questions: List[str], top_n=2) -> List[str]:
     return get_relevant_content(query, stored_questions, threshold=0.70, top_n=top_n)
 
 if __name__ == "__main__":

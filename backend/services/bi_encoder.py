@@ -24,6 +24,10 @@ def create_embedding(input_text : str) -> List[float]:
 
     return embedding[0].cpu().tolist()
 
+def count_tokens(text: str) -> int:
+    tokens = tokenizer.encode(text)
+    return len(tokens)
+
 if __name__ == "__main__":
     test_pairs = [
         ("I love this movie", "I do not love this movie"),               
