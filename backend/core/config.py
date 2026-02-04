@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     MONGO_DB_NAME: str
 
     #JWT
-    PASSWORD_KEY : str
+    SECRET_KEY : str
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
@@ -24,4 +24,4 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-settings = Settings()
+settings = Settings()  # type: ignore

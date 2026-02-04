@@ -1,21 +1,20 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from backend.api.v1 import analytics, auth, feedback, prompts, responses
 from backend.core.database import check_database_health
-from backend.api import auth, prompts, feedback, responses, analytics
 import uvicorn
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Check DBs
-    print("🔍 Checking database connections...")
+    print("Checking database connections...")
     status = await check_database_health()
     print(f"Database Status: {status}")
     
     if "🔴" in status.values():
-        print("⚠️ Warning: One or more databases are unreachable.")
+        print("Warning: One or more databases are unreachable.")
     
     yield
-    # Shutdown logic (if any) goes here
 
 
 app = FastAPI(lifespan=lifespan, title="Adaptive GenAI API")

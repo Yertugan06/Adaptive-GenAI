@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from backend.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+ALGORITHM = "HS256"
 class TokenPayload(BaseModel):
     sub: str        # user_id
     company_id: int
@@ -34,4 +34,4 @@ def create_access_token(payload: TokenPayload) -> str:
         expire = datetime.now(timezone.utc) + timedelta(hours=24)
         to_encode["exp"] = expire
 
-    return jwt.encode(to_encode, settings.PASSWORD_KEY, algorithm="HS256")
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
