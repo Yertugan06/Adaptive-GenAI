@@ -25,7 +25,8 @@ class AIResponse(BaseModel):
     status: str = "candidate"  # canonical | candidate | quarantine
 
     reuse_count: int = 0
-    avg_rating: float = 0.0
+    rating_sum : float = 0.0
+    bayesian_score: float = 0.0
 
     company_id: int  # SQL Reference
 

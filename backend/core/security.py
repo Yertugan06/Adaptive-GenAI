@@ -25,9 +25,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 #JWT Functions
 
 def create_access_token(payload: TokenPayload) -> str:
-    """
-    Takes a TokenPayload Pydantic model and returns a signed JWT string.
-    """
     to_encode = payload.model_dump()
     
     if not to_encode.get("exp"):
