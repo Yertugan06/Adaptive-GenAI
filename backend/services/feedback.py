@@ -8,7 +8,7 @@ async def process_ai_feedback(event_id: str, rating: int):
         return
         
     company_id = event["company_id"]
-    company_avg = await crud.get_company_avg_rating(company_id)
+    company_baseline = await crud.update_company_stats(company_id, rating)
     
 
     async def update_single_res(res_id: str):
@@ -23,7 +23,7 @@ async def process_ai_feedback(event_id: str, rating: int):
         new_b_score = calculate_bayesian_rating(
             item_reviews_count=new_v,
             item_avg_rating=new_R,
-            global_avg_rating=company_avg
+            global_avg_rating=company_baseline
         )
 
         status = determine_status(new_v, new_b_score)

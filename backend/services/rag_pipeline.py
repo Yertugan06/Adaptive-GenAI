@@ -58,13 +58,13 @@ async def fetch_document_context(query: str, query_vector: List[float], company_
     if not results: return [] # type: ignore
 
     chunk_map = {d["content"]: d for d in results}
-    top_chunks = rerank_documents(query, list(chunk_map.keys()), top_n=5)
+    top_chunks = rerank_documents(query, list(chunk_map.keys()), top_n=10)
 
     sections = []
     used_chunk_ids = []
     for chunk in top_chunks:
         c = chunk_map.get(chunk)
-        used_chunk_ids.append(str(c["_id"])) # type: ignore # Keep the ID
+        used_chunk_ids.append(str(c["_id"])) # type: ignore
         sections.append(f"[Document Knowledge]: {chunk}")
         
     return sections, used_chunk_ids

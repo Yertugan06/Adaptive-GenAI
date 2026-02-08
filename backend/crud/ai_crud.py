@@ -7,6 +7,7 @@ from datetime import datetime, UTC
 
 ai_response_col = mongo_db.ai_responses
 prompt_events_col = mongo_db.prompt_events
+company_stats_col = mongo_db.company_stats
 
 async def create_ai_response(response_data: AIResponse):
     data = response_data.model_dump(by_alias=True, exclude={"id"})
@@ -77,31 +78,41 @@ async def update_ai_response_stats(res_id: str, rating: float, b_score: float, s
     )
 
 async def get_company_avg_rating(company_id: int) -> float:
-    pipeline = [
-        {"$match": {"company_id": company_id}},
-        {
-            "$group": {
-                "_id": None,
-                "total_ratings_sum": {"$sum": "$rating_sum"},
-                "total_reuse_count": {"$sum": "$reuse_count"}
-            }
-        }
-    ]
 
-    result = await ai_response_col.aggregate(pipeline).to_list(1) #type: ignore
-
-    if not result:
-        return 3.5  # Neutral-positive baseline for new companies
-
-    data = result[0]
-    total_sum = data.get("total_ratings_sum", 0)
-    total_count = data.get("total_reuse_count", 0)
-
-    if total_count <= 0:
-        return 3.5
+    stats = await company_stats_col.find_one({"company_id": company_id})
     
-    avg = total_sum / total_count
-    return float(avg) if avg > 0 else 3.5
+    if not stats:
+        return 3.5  # Neutral-positive baseline for brand new companies
+    
+    avg = stats.get("company_avg_score", 3.5)
+    
+    return float(avg)
+
+async def update_company_stats(company_id: int, rating: int) -> float:
+    result = await company_stats_col.find_one_and_update(
+        {"company_id": company_id},
+        {
+            "$inc": {
+                "total_rating_sum": float(rating), 
+                "total_review_count": 1
+            },
+            "$set": {"updated_at": datetime.now(UTC)}
+        },
+        upsert=True,
+        return_document=True
+    )
+
+    total_sum = result.get("total_rating_sum", 0) # type: ignore
+    total_count = result.get("total_review_count", 0) # type: ignore
+    
+    new_c = total_sum / total_count if total_count > 0 else 3.5
+    
+    await company_stats_col.update_one(
+        {"company_id": company_id},
+        {"$set": {"company_avg_score": new_c}}
+    )
+    
+    return new_c
     
 async def get_user_feedback_history(user_id: int, limit: int = 10):
 
