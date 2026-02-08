@@ -19,3 +19,17 @@ async def submit_feedback(data: FeedbackSubmit, background_tasks: BackgroundTask
         return {"status": "success", "message": "Feedback recorded and AI learning updated"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Feedback failed: {str(e)}")
+    
+@router.get("/history")
+async def get_history(user_id: int, limit: int = 10):
+    try:
+        history = await ai_crud.get_user_feedback_history(user_id, limit)
+        
+        for item in history:
+            item["_id"] = str(item["_id"])
+            if "ai_response_ids" in item:
+                item["ai_response_ids"] = [str(rid) for rid in item["ai_response_ids"]]
+        
+        return history
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Could not retrieve history")

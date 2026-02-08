@@ -122,3 +122,24 @@ async def get_user_feedback_history(user_id: int, limit: int = 10):
     ).limit(limit)
     
     return await cursor.to_list(length=limit)
+
+async def search_ai_responses(filters: dict, limit: int, skip: int) -> List[dict]:
+    cursor = ai_response_col.find(filters).skip(skip).limit(limit).sort("created_at", -1)
+    return await cursor.to_list(length=limit)
+
+
+
+async def update_ai_response_fields(res_id: str, data: dict):
+    data["updated_at"] = datetime.now(UTC)
+    await ai_response_col.update_one(
+        {"_id": ObjectId(res_id)},
+        {"$set": data}
+    )
+
+
+async def update_ai_response_status(res_id: str, status: str) -> bool:
+    result = await ai_response_col.update_one(
+        {"_id": ObjectId(res_id)},
+        {"$set": {"status": status, "updated_at": datetime.now(UTC)}}
+    )
+    return result.modified_count > 0
