@@ -20,7 +20,6 @@ class DocumentChunk(BaseModel):
     embedding: List[float]     
 
     page_number: Optional[int] = None
-    section_title: Optional[str] = None
     
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     schema_version: int = 1

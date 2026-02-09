@@ -7,8 +7,7 @@ class GenerationEvent(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    mongo_ai_response_id = Column(String(50)) # Soft link to MongoDB
-    used_cache = Column(Boolean, default=False)
+    mongo_event_id = Column(String(50)) # Soft link to MongoDB
     rating = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())
 

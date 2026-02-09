@@ -1,12 +1,20 @@
 import asyncio
 from backend.services.math_utils import calculate_bayesian_rating, determine_status
 from backend.crud import ai_crud as crud
+from sqlalchemy.orm import Session
 
-async def process_ai_feedback(event_id: str, rating: int):
+async def process_ai_feedback(db_sql : Session,event_id: str, rating: int):
     event = await crud.get_event_by_id(event_id)
     if not event or not event.get("ai_response_ids"):
         return
-        
+    
+    crud.create_generation_audit(
+        db_sql, 
+        user_id=event.get("user_id"), 
+        mongo_id=event_id, 
+        rating=rating
+    )
+    
     company_id = event["company_id"]
     company_baseline = await crud.update_company_stats(company_id, rating)
     

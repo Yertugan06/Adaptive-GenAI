@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from backend.crud import ai_crud
 from backend.services.feedback import process_ai_feedback
 from pydantic import BaseModel, Field
+from backend.core.database import get_sql_db
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -10,11 +12,11 @@ class FeedbackSubmit(BaseModel):
     rating: int = Field(ge=1, le=5)
 
 @router.post("/submit")
-async def submit_feedback(data: FeedbackSubmit, background_tasks: BackgroundTasks):
+async def submit_feedback(data: FeedbackSubmit, background_tasks: BackgroundTasks, db_sql: Session = Depends(get_sql_db)):
     try:
         await ai_crud.update_event_rating(data.event_id, data.rating)
         
-        background_tasks.add_task(process_ai_feedback, data.event_id, data.rating)
+        background_tasks.add_task(process_ai_feedback,db_sql, data.event_id, data.rating)
         
         return {"status": "success", "message": "Feedback recorded and AI learning updated"}
     except Exception as e:

@@ -4,6 +4,8 @@ from backend.schemas.nosql.prompt_event import PromptEvent
 from bson import ObjectId
 from typing import List
 from datetime import datetime, UTC
+from sqlalchemy.orm import Session
+from schemas.sql import GenerationEvent
 
 ai_response_col = mongo_db.ai_responses
 prompt_events_col = mongo_db.prompt_events
@@ -143,3 +145,16 @@ async def update_ai_response_status(res_id: str, status: str) -> bool:
         {"$set": {"status": status, "updated_at": datetime.now(UTC)}}
     )
     return result.modified_count > 0
+
+def create_generation_audit(db: Session, user_id: int, mongo_id: str, rating: int):
+    try:
+        new_audit = GenerationEvent(
+            user_id=user_id,
+            mongo_event_id=mongo_id,
+            rating=rating
+        )
+        db.add(new_audit)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"Audit log failed: {e}")
