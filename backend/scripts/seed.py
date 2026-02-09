@@ -9,7 +9,8 @@ from dateutil import parser
 # Import your existing services
 from backend.services.bi_encoder import create_embedding, count_tokens
 from backend.services.llm import summarize, TOKENIZER
-from backend.core.database import get_sql_db, mongo_db
+from backend.core.database import get_sql_db, mongo_db, engine
+from backend.schemas.sql import Base
 
 
 ai_responses_col = mongo_db.ai_responses
@@ -79,11 +80,11 @@ COMPANIES = [
 ]
 
 USERS = [
-    {"id": 101, "company_id": 1, "name": "Alex Chen", "role": "ML Engineer", "created_at": "2024-06-02T08:00:00Z"},
-    {"id": 102, "company_id": 1, "name": "Sarah Johnson", "role": "Data Scientist", "created_at": "2024-06-03T09:15:00Z"},
-    {"id": 103, "company_id": 1, "name": "Marcus Rodriguez", "role": "Engineering Manager", "created_at": "2024-06-05T11:00:00Z"},
-    {"id": 104, "company_id": 1, "name": "Jamie Wilson", "role": "AI Research Intern", "created_at": "2024-08-01T13:00:00Z"},
-    {"id": 201, "company_id": 2, "name": "Priya Sharma", "role": "Senior Data Engineer", "created_at": "2024-07-20T14:00:00Z"}
+    {"id": 101, "company_id": 1, "name": "Alex Chen", "email": "alex.chen@techflow.com", "role": "ML Engineer", "created_at": "2024-06-02T08:00:00Z"},
+    {"id": 102, "company_id": 1, "name": "Sarah Johnson", "email": "sarah.johnson@techflow.com", "role": "Data Scientist", "created_at": "2024-06-03T09:15:00Z"},
+    {"id": 103, "company_id": 1, "name": "Marcus Rodriguez", "email": "marcus.rodriguez@techflow.com", "role": "Engineering Manager", "created_at": "2024-06-05T11:00:00Z"},
+    {"id": 104, "company_id": 1, "name": "Jamie Wilson", "email": "jamie.wilson@techflow.com", "role": "AI Research Intern", "created_at": "2024-08-01T13:00:00Z"},
+    {"id": 201, "company_id": 2, "name": "Priya Sharma", "email": "priya.sharma@datasphere.com", "role": "Senior Data Engineer", "created_at": "2024-07-20T14:00:00Z"}
 ]
 
 # AI Responses with full content and all fields
@@ -449,13 +450,20 @@ async def seed():
     
     # 1. SQL: Companies & Users
     # -----------------------------------------------
+    Base.metadata.create_all(bind=engine)
     db_sql = next(get_sql_db())
     try:
-        # Clear old data
+        # Clear old data with proper order to respect foreign keys
         logger.info("Clearing old SQL data...")
+        # Truncate in reverse order of dependencies
         db_sql.execute(text("TRUNCATE TABLE generation_events RESTART IDENTITY CASCADE"))
         db_sql.execute(text("TRUNCATE TABLE users RESTART IDENTITY CASCADE"))
         db_sql.execute(text("TRUNCATE TABLE companies RESTART IDENTITY CASCADE"))
+        
+        # Reset sequences to avoid conflicts with explicit IDs
+        db_sql.execute(text("ALTER SEQUENCE companies_id_seq RESTART WITH 1"))
+        db_sql.execute(text("ALTER SEQUENCE users_id_seq RESTART WITH 101"))
+        db_sql.execute(text("ALTER SEQUENCE generation_events_id_seq RESTART WITH 1"))
         
         # Insert companies
         logger.info(f"Inserting {len(COMPANIES)} companies...")
@@ -474,18 +482,19 @@ async def seed():
                 }
             )
         
-        # Insert users
+        # Insert users with email field
         logger.info(f"Inserting {len(USERS)} users...")
         for u in USERS:
             db_sql.execute(
                 text("""
-                    INSERT INTO users (id, company_id, name, role, created_at) 
-                    VALUES (:id, :company_id, :name, :role, :created_at)
+                    INSERT INTO users (id, company_id, name, email, role, created_at) 
+                    VALUES (:id, :company_id, :name, :email, :role, :created_at)
                 """),
                 {
                     "id": u["id"],
                     "company_id": u["company_id"],
                     "name": u["name"],
+                    "email": u["email"],
                     "role": u["role"],
                     "created_at": get_date(u["created_at"])
                 }
@@ -507,7 +516,7 @@ async def seed():
     clean_responses = []
     logger.info(f"Processing {len(AI_RESPONSES)} AI responses with real embeddings...")
     
-    for r in AI_RESPONSES:
+    for i, r in enumerate(AI_RESPONSES):
         logger.info(f"Generating embedding for response {r['_id']}...")
         
         # Generate real embedding from the response text
@@ -540,6 +549,10 @@ async def seed():
             doc["quarantine_reason"] = r["quarantine_reason"]
         
         clean_responses.append(doc)
+        
+        # Small delay to prevent overwhelming the embedding service
+        if i % 3 == 0:
+            await asyncio.sleep(0.05)
     
     if clean_responses:
         await ai_responses_col.insert_many(clean_responses)
@@ -593,6 +606,9 @@ async def seed():
             user_id, short_p_id, rating, date_str = row
             full_oid_str = str(get_oid(short_p_id))
             
+            # Convert date string from "YYYY-MM-DD HH:MM:SS" to ISO format
+            iso_date_str = date_str.replace(" ", "T") + "Z"
+            
             db_sql.execute(
                 text("""
                     INSERT INTO generation_events (user_id, mongo_event_id, rating, created_at) 
@@ -602,7 +618,7 @@ async def seed():
                     "user_id": user_id,
                     "mongo_event_id": full_oid_str,
                     "rating": rating,
-                    "created_at": get_date(date_str.replace(" ", "T") + "Z")
+                    "created_at": get_date(iso_date_str)
                 }
             )
         
