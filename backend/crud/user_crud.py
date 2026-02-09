@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from backend.schemas.sql.user import User
 from backend.core.security import hash_password
-from backend.api.v1.auth import UserCreate
+from backend.schemas.sql.user import UserCreate
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()

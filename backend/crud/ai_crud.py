@@ -5,7 +5,7 @@ from bson import ObjectId
 from typing import List
 from datetime import datetime, UTC
 from sqlalchemy.orm import Session
-from schemas.sql import GenerationEvent
+from backend.schemas.sql import GenerationEvent
 
 ai_response_col = mongo_db.ai_responses
 prompt_events_col = mongo_db.prompt_events

@@ -7,13 +7,13 @@ from backend.core.security import (
     TokenPayload
 )
 from backend.crud import user_crud, company_crud
+from backend.schemas.sql.user import UserCreate
+from backend.api.v1.deps import get_current_user
+from backend.schemas.sql.user import User
 from pydantic import BaseModel, EmailStr
-from deps import get_current_user
-from schemas.sql.user import User
 
 router = APIRouter()
 
-# Schemas 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
@@ -23,12 +23,6 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     user: dict
 
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-    name: str
-    company_id: int
-    role: str = "employee"
 
 # Endpoints
 
