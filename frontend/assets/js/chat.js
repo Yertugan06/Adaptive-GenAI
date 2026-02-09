@@ -15,12 +15,11 @@ const sendPromptBtn = document.getElementById("sendPromptBtn");
 const feedbackBox = document.getElementById("feedbackBox");
 const fbTarget = document.getElementById("fbTarget");
 const ratingEl = document.getElementById("rating");
-const commentEl = document.getElementById("comment");
 const sendFeedbackBtn = document.getElementById("sendFeedbackBtn");
 const fbError = document.getElementById("fbError");
 
 let feedbackPending = false;
-let lastAiResponseId = null;
+let lastEventId = null;
 
 function escapeHtml(str) {
   return String(str)
@@ -29,10 +28,14 @@ function escapeHtml(str) {
     .replaceAll(">", "&gt;");
 }
 
-function setBanner(msg) {
+function setBanner(msg, isError = false) {
   banner.textContent = msg;
   banner.classList.remove("hidden");
+  banner.className = isError ? 
+    "px-4 py-3 mb-4 rounded-xl border border-red-800 bg-red-900/30 text-red-300" :
+    "px-4 py-3 mb-4 rounded-xl border border-blue-800 bg-blue-900/30 text-blue-300";
 }
+
 function clearBanner() {
   banner.textContent = "";
   banner.classList.add("hidden");
@@ -42,7 +45,7 @@ function lockInput() {
   feedbackPending = true;
   promptInput.disabled = true;
   sendPromptBtn.disabled = true;
-  promptInput.classList.add("opacity-60");
+  promptInput.classList.add("opacity-60", "cursor-not-allowed");
   sendPromptBtn.classList.add("opacity-60", "cursor-not-allowed");
 }
 
@@ -50,7 +53,7 @@ function unlockInput() {
   feedbackPending = false;
   promptInput.disabled = false;
   sendPromptBtn.disabled = false;
-  promptInput.classList.remove("opacity-60");
+  promptInput.classList.remove("opacity-60", "cursor-not-allowed");
   sendPromptBtn.classList.remove("opacity-60", "cursor-not-allowed");
 }
 
@@ -68,9 +71,9 @@ function addMessage(role, text, meta = "") {
   wrap.scrollIntoView({ behavior: "smooth", block: "end" });
 }
 
-function showFeedbackWidget(aiId) {
-  lastAiResponseId = aiId;
-  fbTarget.textContent = `response: ${aiId}`;
+function showFeedbackWidget(eventId) {
+  lastEventId = eventId;
+  fbTarget.textContent = `Event: ${eventId}`;
   feedbackBox.classList.remove("hidden");
   fbError.classList.add("hidden");
   fbError.textContent = "";
@@ -78,20 +81,17 @@ function showFeedbackWidget(aiId) {
 
 function hideFeedbackWidget() {
   feedbackBox.classList.add("hidden");
-  commentEl.value = "";
   ratingEl.value = "5";
 }
 
 async function syncFeedbackState() {
-  const me = await loadMe();
-
-  // Badge from session user (fast) — can also update from /auth/me if it includes name/role
-  if (me.feedback_required) {
-    lockInput();
-    setBanner("Feedback is required to continue. Please submit feedback.");
-  } else {
-    unlockInput();
-    clearBanner();
+  try {
+    const me = await loadMe();
+    if (me) {
+      userBadge.textContent = `${me.name} • ${me.role}`;
+    }
+  } catch (error) {
+    console.error("Failed to sync user state:", error);
   }
 }
 
@@ -104,21 +104,22 @@ logoutBtn.addEventListener("click", async () => {
 
 sendPromptBtn.addEventListener("click", submitPrompt);
 promptInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") submitPrompt();
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    submitPrompt();
+  }
 });
 
 sendFeedbackBtn.addEventListener("click", submitFeedback);
 
 async function init() {
-  const user = getUser();
-  if (user) userBadge.textContent = `${user.name} • ${user.role}`;
   await syncFeedbackState();
 }
 init();
 
 async function submitPrompt() {
   if (feedbackPending) {
-    setBanner("Feedback is required before sending the next prompt.");
+    setBanner("Please provide feedback on the previous response before sending a new prompt.", true);
     return;
   }
 
@@ -134,34 +135,36 @@ async function submitPrompt() {
   try {
     const data = await request("/prompts/submit", {
       method: "POST",
-      body: { prompt_text: promptText, topics: ["general"] }
+      body: { prompt_text: promptText }
     });
 
     addMessage(
       "AI",
       data.response_text,
-      `${data.model || ""}${data.used_cached_answer ? " • cached" : ""}`.trim()
+      `${data.model || "model-unknown"}`
     );
 
-    // According to spec, backend usually sets feedback_required=true after a generation
+    // Show feedback widget if required
     if (data.feedback_required) {
       lockInput();
       showFeedbackWidget(data.ai_response_id);
-      setBanner("Feedback required. Please rate the answer to continue.");
+      setBanner("Please rate this response to continue.");
     } else {
       unlockInput();
       hideFeedbackWidget();
       clearBanner();
     }
   } catch (err) {
+    console.error("Prompt error:", err);
     if (err.status === 403) {
-      // backend says feedback required
-      await syncFeedbackState();
+      lockInput();
+      setBanner(err.detail || "Feedback required for previous response before submitting a new prompt.", true);
     } else if (err.status === 401) {
       clearToken();
       window.location.href = "./login.html";
     } else {
-      setBanner(err.message || "Failed to submit prompt.");
+      setBanner(err.message || "Failed to submit prompt.", true);
+      unlockInput();
     }
   } finally {
     if (!feedbackPending) {
@@ -175,8 +178,8 @@ async function submitFeedback() {
   fbError.classList.add("hidden");
   fbError.textContent = "";
 
-  if (!lastAiResponseId) {
-    fbError.textContent = "Missing ai_response_id.";
+  if (!lastEventId) {
+    fbError.textContent = "Missing event ID.";
     fbError.classList.remove("hidden");
     return;
   }
@@ -188,27 +191,21 @@ async function submitFeedback() {
     await request("/feedback/submit", {
       method: "POST",
       body: {
-        ai_response_id: lastAiResponseId,
-        rating: Number(ratingEl.value),
-        comment: commentEl.value.trim()
+        event_id: lastEventId,
+        rating: Number(ratingEl.value)
       }
     });
+    
+    hideFeedbackWidget();
+    lastEventId = null;
+    unlockInput();
+    clearBanner();
   } catch (err) {
-    // Spec: 400 feedback already exists
-    if (!(err.status === 400 && /already exists/i.test(err.message))) {
-      fbError.textContent = err.message || "Failed to submit feedback.";
-      fbError.classList.remove("hidden");
-      sendFeedbackBtn.disabled = false;
-      sendFeedbackBtn.classList.remove("opacity-60", "cursor-not-allowed");
-      return;
-    }
+    console.error("Feedback error:", err);
+    fbError.textContent = err.message || "Failed to submit feedback.";
+    fbError.classList.remove("hidden");
+  } finally {
+    sendFeedbackBtn.disabled = false;
+    sendFeedbackBtn.classList.remove("opacity-60", "cursor-not-allowed");
   }
-
-  hideFeedbackWidget();
-  lastAiResponseId = null;
-
-  await syncFeedbackState();
-
-  sendFeedbackBtn.disabled = false;
-  sendFeedbackBtn.classList.remove("opacity-60", "cursor-not-allowed");
 }

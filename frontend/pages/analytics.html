@@ -8,19 +8,19 @@
 </head>
 <body class="bg-slate-950 text-slate-100">
   <main class="max-w-6xl mx-auto p-6 space-y-6">
-    <h1 class="text-2xl font-semibold">Analytics</h1>
+    <h1 class="text-2xl font-semibold">Analytics Dashboard</h1>
 
-    <div id="cards" class="grid grid-cols-3 gap-4"></div>
+    <div id="cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="p-4 rounded-2xl border border-slate-800 bg-slate-900">
-        <h2 class="font-semibold mb-2">Topics</h2>
+        <h2 class="font-semibold mb-3">Topics Usage</h2>
         <table class="w-full">
           <thead class="text-slate-400 text-sm">
             <tr>
-              <th class="text-left p-2">topic</th>
-              <th class="p-2 text-center">total_uses</th>
-              <th class="p-2 text-center">avg_rating</th>
+              <th class="text-left p-2">Topic</th>
+              <th class="p-2 text-center">Total Uses</th>
+              <th class="p-2 text-center">Avg Rating</th>
             </tr>
           </thead>
           <tbody id="topicsTable"></tbody>
@@ -28,8 +28,15 @@
       </div>
 
       <div>
-        <h2 class="font-semibold mb-2">Cache Efficiency</h2>
+        <h2 class="font-semibold mb-3">System Performance</h2>
         <div id="cacheBox"></div>
+        
+        <div class="mt-4 p-4 rounded-2xl border border-slate-800 bg-slate-900">
+          <h3 class="font-semibold mb-2">Top Performing Response</h3>
+          <div id="topResponse" class="text-sm text-slate-300">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
       </div>
     </div>
   </main>

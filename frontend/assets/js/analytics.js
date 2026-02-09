@@ -21,36 +21,55 @@ async function init() {
     return;
   }
 
-  const [company, topics, cache] = await Promise.all([
-    request(`/analytics/company/${me.company_id}`),
-    request("/analytics/topics"),
-    request("/analytics/cache-efficiency")
-  ]);
-
-  cards.innerHTML = "";
-  cards.appendChild(card("Total prompts", company.total_prompts));
-  cards.appendChild(card("Avg rating", company.avg_rating));
-  cards.appendChild(card("Cache hit ratio", company.cache_hit_ratio));
-
-  topicsTable.innerHTML = "";
-  topics.forEach(t => {
-    const tr = document.createElement("tr");
-    tr.className = "border-t border-slate-800";
-    tr.innerHTML = `
-      <td class="p-3">${t.topic}</td>
-      <td class="p-3 text-center">${t.total_uses}</td>
-      <td class="p-3 text-center">${t.avg_rating}</td>
+  try {
+    const company = await request(`/analytics/company/${me.company_id}`);
+    
+    cards.innerHTML = "";
+    cards.appendChild(card("Total Reviews", company.total_reviews || 0));
+    cards.appendChild(card("Global Avg Rating", company.global_average_rating ? company.global_average_rating.toFixed(2) : "0.0"));
+    
+    const status = company.status_distribution || {};
+    const statusCard = document.createElement("div");
+    statusCard.className = "p-4 rounded-2xl border border-slate-800 bg-slate-900";
+    statusCard.innerHTML = `
+      <div class="text-sm text-slate-400">Status Distribution</div>
+      <div class="mt-2 grid grid-cols-3 gap-2">
+        <div class="text-center">
+          <div class="text-lg font-semibold">${status.candidate || 0}</div>
+          <div class="text-xs text-slate-400">Candidate</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-semibold">${status.canonical || 0}</div>
+          <div class="text-xs text-slate-400">Canonical</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-semibold">${status.quarantine || 0}</div>
+          <div class="text-xs text-slate-400">Quarantine</div>
+        </div>
+      </div>
     `;
-    topicsTable.appendChild(tr);
-  });
+    cards.appendChild(statusCard);
 
-  cacheBox.innerHTML = `
-    <div class="p-4 rounded-2xl border border-slate-800 bg-slate-900 space-y-1">
-      <div>cache_hits: <b>${cache.cache_hits}</b></div>
-      <div>cache_misses: <b>${cache.cache_misses}</b></div>
-      <div>estimated_token_savings: <b>${cache.estimated_token_savings}</b></div>
-    </div>
-  `;
+    // Topics and cache endpoints don't exist in backend
+    topicsTable.innerHTML = `
+      <tr class="border-t border-slate-800">
+        <td class="p-3 text-slate-400 text-center" colspan="3">Topics analytics not implemented</td>
+      </tr>
+    `;
+    
+    cacheBox.innerHTML = `
+      <div class="p-4 rounded-2xl border border-slate-800 bg-slate-900 space-y-1">
+        <div class="text-slate-400">Cache efficiency analytics not implemented</div>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Failed to load analytics:", error);
+    cards.innerHTML = `
+      <div class="p-4 rounded-2xl border border-red-800 bg-slate-900 text-red-400">
+        Failed to load analytics: ${error.message}
+      </div>
+    `;
+  }
 }
 
 init();
