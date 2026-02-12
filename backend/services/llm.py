@@ -7,7 +7,7 @@ DEFAULT_MODEL = "gemini-2.5-flash"
 TOKENIZER = AutoTokenizer.from_pretrained("backend/ml_models/multilingual-e5-base")
 
 
-def ask_llm(prompt: str) -> str:
+async def ask_llm(prompt: str) -> str:
     response = client.models.generate_content(
         model=DEFAULT_MODEL,
         contents=prompt
@@ -15,7 +15,7 @@ def ask_llm(prompt: str) -> str:
     return response.text #type: ignore
 
 
-def summarize(text :str) -> str:
+async def summarize(text :str) -> str:
     prompt = (
         f"INSTRUCTION: Summarize the text below. Focus only on core semantic facts. "
         f"No introductory phrases. Maximum output length is 450 tokens.\n\n"

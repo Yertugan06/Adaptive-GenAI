@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Response Management - AI Response System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-slate-800 text-white p-4 min-h-screen">
+      <h1 class="text-xl font-bold mb-6">AI Response System</h1>
+      <nav class="space-y-2">
+        <a href="./chat.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Chat</a>
+        <a href="./dashboard.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Dashboard</a>
+        <a href="./responses.html" class="block px-4 py-2 bg-slate-700 rounded">Responses</a>
+        <a href="./profile.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Profile</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">Response Management</h1>
+        <p class="text-gray-600">Admin view for AI governance teams</p>
+      </div>
+
+      <div id="loading" class="text-center py-12">
+        <div class="text-gray-600">Loading responses...</div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-slate-800 text-white">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Canonical Prompt</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Bayesian Score</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Reuse Count</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="responsesTableBody" class="bg-white divide-y divide-gray-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="pagination" class="mt-6 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        <!-- Pagination controls -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    requireAuth();
+    import './js/responses.js';
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AI Response System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-slate-800 text-white p-4 min-h-screen">
+      <h1 class="text-xl font-bold mb-6">AI Response System</h1>
+      <nav class="space-y-2">
+        <a href="./chat.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Chat</a>
+        <a href="./dashboard.html" class="block px-4 py-2 bg-slate-700 rounded">Dashboard</a>
+        <a href="./responses.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Responses</a>
+        <a href="./profile.html" class="block px-4 py-2 hover:bg-slate-700 rounded">Profile</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <h1 class="text-3xl font-bold text-slate-800 mb-8">Company Analytics Dashboard</h1>
+
+      <div id="loading" class="text-center py-12">
+        <div class="text-gray-600">Loading dashboard...</div>
+      </div>
+
+      <div id="dashboardContent" class="hidden">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="text-sm font-medium text-gray-600 mb-2">Total Reviews</div>
+            <div id="totalReviews" class="text-4xl font-bold text-slate-800">0</div>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="text-sm font-medium text-gray-600 mb-2">Global Average Rating</div>
+            <div id="avgRating" class="text-4xl font-bold text-blue-600">N/A</div>
+          </div>
+        </div>
+
+        <!-- Status Breakdown -->
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8">
+          <h2 class="text-xl font-semibold text-slate-800 mb-4">Status Breakdown</h2>
+          <div id="statusBreakdown">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Top Canonical Responses -->
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 class="text-xl font-semibold text-slate-800 mb-4">Top Canonical Responses</h2>
+          <div id="topResponses">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    requireAuth();
+    import './js/dashboard.js';
+  </script>
+</body>
+</html>

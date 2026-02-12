@@ -29,6 +29,8 @@ def count_tokens(text: str) -> int:
     return len(tokens)
 
 if __name__ == "__main__":
+    print(f"CUDA available: {torch.cuda.is_available()}")
+    print(f"CrossEncoder device: {model.device}")
     test_pairs = [
         ("I love this movie", "I do not love this movie"),               
         ("The dog bit the man", "The man bit the dog"),                 

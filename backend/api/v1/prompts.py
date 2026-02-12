@@ -12,7 +12,7 @@ class PromptRequest(BaseModel):
     prompt_text: str
 
 class PromptResponse(BaseModel):
-    ai_response_id: int
+    ai_response_id: str
     response_text: str
     model: str
     feedback_required: bool = True
@@ -20,26 +20,27 @@ class PromptResponse(BaseModel):
 # Endpoints 
 
 @router.post("/submit", response_model=PromptResponse)
-def submit_prompt(
+async def submit_prompt(
     data: PromptRequest, 
     current_user: User = Depends(get_current_user)
 ):
 
-    if has_pending_feedback(current_user.id): # type: ignore
+    if await has_pending_feedback(current_user.id): # type: ignore
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail="Feedback required for previous response before submitting a new prompt."
         )
 
 
-    result = run_rag_pipeline(
+    result = await run_rag_pipeline(
+        user_id=current_user.id, # type: ignore
         query=data.prompt_text,
         company_id=current_user.company_id # type: ignore
     )
 
     return {
-        "ai_response_id": result.id, # type: ignore
-        "response_text": result.text, # type: ignore
-        "model": result.model, # type: ignore
-        "feedback_required": True
-    }
+    "ai_response_id": result.ai_response_id, 
+    "response_text": result.response_text,
+    "model": result.model,
+    "feedback_required": result.feedback_required
+}

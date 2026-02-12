@@ -1,16 +1,9 @@
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query, Body, status
+from fastapi import APIRouter, HTTPException, Body, status
 from backend.crud import ai_crud
 from backend.schemas.nosql.ai_response import AIResponse
 
-router = APIRouter(prefix="/responses", tags=["AI Responses"])
-
-@router.get("/{res_id}", response_model=AIResponse)
-async def get_response(res_id: str):
-    response = await ai_crud.get_ai_response_by_id(res_id)
-    if not response:
-        raise HTTPException(status_code=404, detail="Response not found")
-    return response
+router = APIRouter()
 
 @router.get("/search", response_model=List[AIResponse])
 async def search_responses(
@@ -29,6 +22,14 @@ async def search_responses(
         filters["bayesian_score"] = {"$gte": min_score}  # type: ignore
 
     return await ai_crud.search_ai_responses(filters, limit, skip)
+
+@router.get("/{res_id}", response_model=AIResponse)
+async def get_response(res_id: str):
+    response = await ai_crud.get_ai_response_by_id(res_id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Response not found")
+    return response
+
 
 @router.post("", response_model=AIResponse, status_code=status.HTTP_201_CREATED)
 async def create_response(response: AIResponse):
@@ -53,7 +54,7 @@ async def update_response_content(res_id: str, update_data: dict = Body(...)):
     return await ai_crud.get_ai_response_by_id(res_id)
 
 @router.patch("/{res_id}/status")
-async def patch_status(res_id: str, status: str = Query(..., regex="^(candidate|canonical|quarantine)$")):
+async def patch_status(res_id: str, status: str = Body(...,embed=True ,pattern="^(candidate|canonical|quarantine)$")):
     success = await ai_crud.update_ai_response_status(res_id, status)
     if not success:
         raise HTTPException(status_code=404, detail="Response not found")

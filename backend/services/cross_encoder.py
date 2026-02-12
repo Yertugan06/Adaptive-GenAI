@@ -1,11 +1,12 @@
 import torch.nn as nn
 from sentence_transformers import CrossEncoder
 from typing import List
-
+import torch
 
 model = CrossEncoder(
     "./backend/ml_models/bge-reranker-v2-m3",
-    activation_fn=nn.Sigmoid()
+    activation_fn=nn.Sigmoid(),
+    device="cuda" if torch.cuda.is_available() else "cpu"
 )
 
 def get_relevant_content(query: str, docs: List[str], threshold: float, top_n: int = 5) -> List[str]:
@@ -27,6 +28,7 @@ def find_similarities(query: str, stored_questions: List[str], top_n=2) -> List[
     return get_relevant_content(query, stored_questions, threshold=0.70, top_n=top_n)
 
 if __name__ == "__main__":
+
     # --- TEST 1: Memory Matching (High Threshold 0.70) ---
     print("--- Testing: Memory Matching (find_similarities) ---")
     

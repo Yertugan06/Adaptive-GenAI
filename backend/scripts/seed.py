@@ -57,7 +57,7 @@ def generate_real_embedding(text: str) -> list[float]:
         # Fallback to dummy embedding
         return [0.1] * 768
 
-def generate_summary_for_response(response_text: str) -> str:
+async def generate_summary_for_response(response_text: str) -> str:
     """Generate a summary for long response text if needed"""
     # Count tokens in response
     token_count = count_tokens(response_text)
@@ -65,7 +65,7 @@ def generate_summary_for_response(response_text: str) -> str:
     # If response is very long, generate a summary
     if token_count > 300:
         try:
-            summary = summarize(response_text)
+            summary = await summarize(response_text)
             logger.debug(f"Generated summary for long response (original: {token_count} tokens)")
             return summary
         except Exception as e:
@@ -80,11 +80,11 @@ COMPANIES = [
 ]
 
 USERS = [
-    {"id": 101, "company_id": 1, "name": "Alex Chen", "email": "alex.chen@techflow.com", "role": "ML Engineer", "created_at": "2024-06-02T08:00:00Z"},
-    {"id": 102, "company_id": 1, "name": "Sarah Johnson", "email": "sarah.johnson@techflow.com", "role": "Data Scientist", "created_at": "2024-06-03T09:15:00Z"},
-    {"id": 103, "company_id": 1, "name": "Marcus Rodriguez", "email": "marcus.rodriguez@techflow.com", "role": "Engineering Manager", "created_at": "2024-06-05T11:00:00Z"},
-    {"id": 104, "company_id": 1, "name": "Jamie Wilson", "email": "jamie.wilson@techflow.com", "role": "AI Research Intern", "created_at": "2024-08-01T13:00:00Z"},
-    {"id": 201, "company_id": 2, "name": "Priya Sharma", "email": "priya.sharma@datasphere.com", "role": "Senior Data Engineer", "created_at": "2024-07-20T14:00:00Z"}
+    {"id": 1, "company_id": 1, "name": "Alex Chen", "email": "alex.chen@techflow.com", "role": "ML Engineer","hashed_password" : "$2b$12$YIFPhp7mZz.VSoXrAbFFPOpF/ATCjljL3upkGKF.z63zofyz28FzS","created_at": "2024-06-02T08:00:00Z"},
+    {"id": 2, "company_id": 1, "name": "Sarah Johnson", "email": "sarah.johnson@techflow.com", "role": "Data Scientist","hashed_password" : "$2b$12$YIFPhp7mZz.VSoXrAbFFPOpF/ATCjljL3upkGKF.z63zofyz28FzS", "created_at": "2024-06-03T09:15:00Z"},
+    {"id": 3, "company_id": 1, "name": "Marcus Rodriguez", "email": "marcus.rodriguez@techflow.com", "role": "Engineering Manager","hashed_password" : "$2b$12$YIFPhp7mZz.VSoXrAbFFPOpF/ATCjljL3upkGKF.z63zofyz28FzS", "created_at": "2024-06-05T11:00:00Z"},
+    {"id": 4, "company_id": 1, "name": "Jamie Wilson", "email": "jamie.wilson@techflow.com", "role": "AI Research Intern","hashed_password" : "$2b$12$YIFPhp7mZz.VSoXrAbFFPOpF/ATCjljL3upkGKF.z63zofyz28FzS", "created_at": "2024-08-01T13:00:00Z"},
+    {"id": 5, "company_id": 2, "name": "Priya Sharma", "email": "priya.sharma@datasphere.com", "role": "Senior Data Engineer","hashed_password" : "$2b$12$YIFPhp7mZz.VSoXrAbFFPOpF/ATCjljL3upkGKF.z63zofyz28FzS", "created_at": "2024-07-20T14:00:00Z"}
 ]
 
 # AI Responses with full content and all fields
@@ -369,61 +369,61 @@ AI_RESPONSES = [
 # Complete Prompt Events (25 documents)
 PROMPT_EVENTS = [
     # Company 1 Events
-    {"_id": "P101", "prompt_text": "What is gradient descent?", "ai_response_ids": ["A001"], "user_id": 101, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-12T10:30:00Z"},
-    {"_id": "P102", "prompt_text": "Explain gradient descent intuitively", "ai_response_ids": ["A001"], "user_id": 104, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-12T14:15:00Z"},
-    {"_id": "P103", "prompt_text": "Python list vs tuple", "ai_response_ids": ["A002"], "user_id": 104, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-13T09:45:00Z"},
-    {"_id": "P104", "prompt_text": "When should I use a tuple instead of a list?", "ai_response_ids": ["A002"], "user_id": 102, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-13T11:20:00Z"},
-    {"_id": "P105", "prompt_text": "How to show correlations in my dataframe?", "ai_response_ids": ["A003"], "user_id": 102, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-14T15:30:00Z"},
-    {"_id": "P106", "prompt_text": "What's the difference between Docker and Kubernetes?", "ai_response_ids": ["A004"], "user_id": 103, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-15T10:00:00Z"},
-    {"_id": "P107", "prompt_text": "My SQL query is slow, how to optimize?", "ai_response_ids": ["A005"], "user_id": 101, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-16T13:45:00Z"},
-    {"_id": "P108", "prompt_text": "How to reduce bias in our ML models?", "ai_response_ids": ["A006"], "user_id": 103, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-17T16:20:00Z"},
-    {"_id": "P109", "prompt_text": "Setup for MLOps pipeline", "ai_response_ids": ["A007"], "user_id": 101, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-18T09:15:00Z"},
-    {"_id": "P110", "prompt_text": "Calculate AI project ROI", "ai_response_ids": ["A008"], "user_id": 103, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-19T14:30:00Z"},
-    {"_id": "P111", "prompt_text": "Explain overfitting in simple terms", "ai_response_ids": ["NEW001"], "user_id": 104, "company_id": 1, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-20T11:45:00Z"},
-    {"_id": "P112", "prompt_text": "Best practices for code documentation", "ai_response_ids": ["NEW002"], "user_id": 101, "company_id": 1, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-21T15:10:00Z"},
-    {"_id": "P113", "prompt_text": "How does a transformer model work?", "ai_response_ids": ["NEW003"], "user_id": 102, "company_id": 1, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-22T10:25:00Z"},
-    {"_id": "P114", "prompt_text": "Heatmap for correlation in pandas", "ai_response_ids": ["A003"], "user_id": 102, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-23T13:40:00Z"},
-    {"_id": "P115", "prompt_text": "Simple explanation of backpropagation", "ai_response_ids": ["NEW004"], "user_id": 104, "company_id": 1, "rating": 3, "used_cached_answer": False, "created_at": "2025-01-24T16:55:00Z"},
+    {"_id": "P101", "prompt_text": "What is gradient descent?", "ai_response_ids": ["A001"], "user_id": 1, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-12T10:30:00Z"},
+    {"_id": "P102", "prompt_text": "Explain gradient descent intuitively", "ai_response_ids": ["A001"], "user_id": 4, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-12T14:15:00Z"},
+    {"_id": "P103", "prompt_text": "Python list vs tuple", "ai_response_ids": ["A002"], "user_id": 4, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-13T09:45:00Z"},
+    {"_id": "P104", "prompt_text": "When should I use a tuple instead of a list?", "ai_response_ids": ["A002"], "user_id": 2, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-13T11:20:00Z"},
+    {"_id": "P105", "prompt_text": "How to show correlations in my dataframe?", "ai_response_ids": ["A003"], "user_id": 2, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-14T15:30:00Z"},
+    {"_id": "P106", "prompt_text": "What's the difference between Docker and Kubernetes?", "ai_response_ids": ["A004"], "user_id": 3, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-15T10:00:00Z"},
+    {"_id": "P107", "prompt_text": "My SQL query is slow, how to optimize?", "ai_response_ids": ["A005"], "user_id": 1, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-16T13:45:00Z"},
+    {"_id": "P108", "prompt_text": "How to reduce bias in our ML models?", "ai_response_ids": ["A006"], "user_id": 3, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-17T16:20:00Z"},
+    {"_id": "P109", "prompt_text": "Setup for MLOps pipeline", "ai_response_ids": ["A007"], "user_id": 1, "company_id": 1, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-18T09:15:00Z"},
+    {"_id": "P110", "prompt_text": "Calculate AI project ROI", "ai_response_ids": ["A008"], "user_id": 3, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-19T14:30:00Z"},
+    {"_id": "P111", "prompt_text": "Explain overfitting in simple terms", "ai_response_ids": ["NEW001"], "user_id": 4, "company_id": 1, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-20T11:45:00Z"},
+    {"_id": "P112", "prompt_text": "Best practices for code documentation", "ai_response_ids": ["NEW002"], "user_id": 1, "company_id": 1, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-21T15:10:00Z"},
+    {"_id": "P113", "prompt_text": "How does a transformer model work?", "ai_response_ids": ["NEW003"], "user_id": 2, "company_id": 1, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-22T10:25:00Z"},
+    {"_id": "P114", "prompt_text": "Heatmap for correlation in pandas", "ai_response_ids": ["A003"], "user_id": 2, "company_id": 1, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-23T13:40:00Z"},
+    {"_id": "P115", "prompt_text": "Simple explanation of backpropagation", "ai_response_ids": ["NEW004"], "user_id": 4, "company_id": 1, "rating": 3, "used_cached_answer": False, "created_at": "2025-01-24T16:55:00Z"},
     # Company 2 Events
-    {"_id": "P201", "prompt_text": "ETL pipeline design best practices", "ai_response_ids": ["B001"], "user_id": 201, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-12T09:15:00Z"},
-    {"_id": "P202", "prompt_text": "How to optimize Spark jobs?", "ai_response_ids": ["B002"], "user_id": 201, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-13T14:30:00Z"},
-    {"_id": "P203", "prompt_text": "Data lake vs data warehouse comparison", "ai_response_ids": ["B003"], "user_id": 201, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-14T11:45:00Z"},
-    {"_id": "P204", "prompt_text": "Real-time streaming implementation", "ai_response_ids": ["C001"], "user_id": 201, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-15T16:20:00Z"},
-    {"_id": "P205", "prompt_text": "Best data format for analytics", "ai_response_ids": ["NEW201"], "user_id": 201, "company_id": 2, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-16T13:10:00Z"},
-    {"_id": "P206", "prompt_text": "Data pipeline monitoring tools", "ai_response_ids": ["NEW202"], "user_id": 201, "company_id": 2, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-17T10:35:00Z"},
-    {"_id": "P207", "prompt_text": "How to build robust ETL?", "ai_response_ids": ["B001"], "user_id": 201, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-18T15:50:00Z"},
-    {"_id": "P208", "prompt_text": "Spark performance tuning guide", "ai_response_ids": ["B002"], "user_id": 201, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-19T12:05:00Z"},
-    {"_id": "P209", "prompt_text": "Modern data platform architecture", "ai_response_ids": ["B003"], "user_id": 201, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-20T09:20:00Z"},
-    {"_id": "P210", "prompt_text": "Data quality validation techniques", "ai_response_ids": ["NEW203"], "user_id": 201, "company_id": 2, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-21T14:35:00Z"}
+    {"_id": "P201", "prompt_text": "ETL pipeline design best practices", "ai_response_ids": ["B001"], "user_id": 5, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-12T09:15:00Z"},
+    {"_id": "P202", "prompt_text": "How to optimize Spark jobs?", "ai_response_ids": ["B002"], "user_id": 5, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-13T14:30:00Z"},
+    {"_id": "P203", "prompt_text": "Data lake vs data warehouse comparison", "ai_response_ids": ["B003"], "user_id": 5, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-14T11:45:00Z"},
+    {"_id": "P204", "prompt_text": "Real-time streaming implementation", "ai_response_ids": ["C001"], "user_id": 5, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-15T16:20:00Z"},
+    {"_id": "P205", "prompt_text": "Best data format for analytics", "ai_response_ids": ["NEW201"], "user_id": 5, "company_id": 2, "rating": 5, "used_cached_answer": False, "created_at": "2025-01-16T13:10:00Z"},
+    {"_id": "P206", "prompt_text": "Data pipeline monitoring tools", "ai_response_ids": ["NEW202"], "user_id": 5, "company_id": 2, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-17T10:35:00Z"},
+    {"_id": "P207", "prompt_text": "How to build robust ETL?", "ai_response_ids": ["B001"], "user_id": 5, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-18T15:50:00Z"},
+    {"_id": "P208", "prompt_text": "Spark performance tuning guide", "ai_response_ids": ["B002"], "user_id": 5, "company_id": 2, "rating": 4, "used_cached_answer": True, "created_at": "2025-01-19T12:05:00Z"},
+    {"_id": "P209", "prompt_text": "Modern data platform architecture", "ai_response_ids": ["B003"], "user_id": 5, "company_id": 2, "rating": 5, "used_cached_answer": True, "created_at": "2025-01-20T09:20:00Z"},
+    {"_id": "P210", "prompt_text": "Data quality validation techniques", "ai_response_ids": ["NEW203"], "user_id": 5, "company_id": 2, "rating": 4, "used_cached_answer": False, "created_at": "2025-01-21T14:35:00Z"}
 ]
 
 # SQL Generation Events (25 rows matching prompt events)
 GEN_EVENTS_SQL = [
-    (101, 'P101', 5, '2025-01-12 10:30:00'),
-    (104, 'P102', 4, '2025-01-12 14:15:00'),
-    (104, 'P103', 5, '2025-01-13 09:45:00'),
-    (102, 'P104', 4, '2025-01-13 11:20:00'),
-    (102, 'P105', 5, '2025-01-14 15:30:00'),
-    (103, 'P106', 4, '2025-01-15 10:00:00'),
-    (101, 'P107', 5, '2025-01-16 13:45:00'),
-    (103, 'P108', 4, '2025-01-17 16:20:00'),
-    (101, 'P109', 5, '2025-01-18 09:15:00'),
-    (103, 'P110', 4, '2025-01-19 14:30:00'),
-    (104, 'P111', 5, '2025-01-20 11:45:00'),
-    (101, 'P112', 4, '2025-01-21 15:10:00'),
-    (102, 'P113', 5, '2025-01-22 10:25:00'),
-    (102, 'P114', 4, '2025-01-23 13:40:00'),
-    (104, 'P115', 3, '2025-01-24 16:55:00'),
-    (201, 'P201', 5, '2025-01-12 09:15:00'),
-    (201, 'P202', 4, '2025-01-13 14:30:00'),
-    (201, 'P203', 5, '2025-01-14 11:45:00'),
-    (201, 'P204', 4, '2025-01-15 16:20:00'),
-    (201, 'P205', 5, '2025-01-16 13:10:00'),
-    (201, 'P206', 4, '2025-01-17 10:35:00'),
-    (201, 'P207', 5, '2025-01-18 15:50:00'),
-    (201, 'P208', 4, '2025-01-19 12:05:00'),
-    (201, 'P209', 5, '2025-01-20 09:20:00'),
-    (201, 'P210', 4, '2025-01-21 14:35:00')
+    (1, 'P101', 5, '2025-01-12 10:30:00'),
+    (4, 'P102', 4, '2025-01-12 14:15:00'),
+    (4, 'P103', 5, '2025-01-13 09:45:00'),
+    (2, 'P104', 4, '2025-01-13 11:20:00'),
+    (2, 'P105', 5, '2025-01-14 15:30:00'),
+    (3, 'P106', 4, '2025-01-15 10:00:00'),
+    (1, 'P107', 5, '2025-01-16 13:45:00'),
+    (3, 'P108', 4, '2025-01-17 16:20:00'),
+    (1, 'P109', 5, '2025-01-18 09:15:00'),
+    (3, 'P110', 4, '2025-01-19 14:30:00'),
+    (4, 'P111', 5, '2025-01-20 11:45:00'),
+    (1, 'P112', 4, '2025-01-21 15:10:00'),
+    (2, 'P113', 5, '2025-01-22 10:25:00'),
+    (2, 'P114', 4, '2025-01-23 13:40:00'),
+    (4, 'P115', 3, '2025-01-24 16:55:00'),
+    (5, 'P201', 5, '2025-01-12 09:15:00'),
+    (5, 'P202', 4, '2025-01-13 14:30:00'),
+    (5, 'P203', 5, '2025-01-14 11:45:00'),
+    (5, 'P204', 4, '2025-01-15 16:20:00'),
+    (5, 'P205', 5, '2025-01-16 13:10:00'),
+    (5, 'P206', 4, '2025-01-17 10:35:00'),
+    (5, 'P207', 5, '2025-01-18 15:50:00'),
+    (5, 'P208', 4, '2025-01-19 12:05:00'),
+    (5, 'P209', 5, '2025-01-20 09:20:00'),
+    (5, 'P210', 4, '2025-01-21 14:35:00')
 ]
 
 # Company Stats
@@ -455,17 +455,16 @@ async def seed():
     try:
         # Clear old data with proper order to respect foreign keys
         logger.info("Clearing old SQL data...")
-        # Truncate in reverse order of dependencies
         db_sql.execute(text("TRUNCATE TABLE generation_events RESTART IDENTITY CASCADE"))
         db_sql.execute(text("TRUNCATE TABLE users RESTART IDENTITY CASCADE"))
         db_sql.execute(text("TRUNCATE TABLE companies RESTART IDENTITY CASCADE"))
         
-        # Reset sequences to avoid conflicts with explicit IDs
+        # Reset sequences to start at 1 (will be updated after explicit inserts)
         db_sql.execute(text("ALTER SEQUENCE companies_id_seq RESTART WITH 1"))
-        db_sql.execute(text("ALTER SEQUENCE users_id_seq RESTART WITH 101"))
+        db_sql.execute(text("ALTER SEQUENCE users_id_seq RESTART WITH 1"))
         db_sql.execute(text("ALTER SEQUENCE generation_events_id_seq RESTART WITH 1"))
         
-        # Insert companies
+        # ---------- Insert companies ----------
         logger.info(f"Inserting {len(COMPANIES)} companies...")
         for c in COMPANIES:
             db_sql.execute(
@@ -482,24 +481,42 @@ async def seed():
                 }
             )
         
-        # Insert users with email field
+        # ✅ Update companies sequence to the highest used id
+        max_company_id = db_sql.execute(text("SELECT MAX(id) FROM companies")).scalar()
+        db_sql.execute(
+            text("SELECT setval('companies_id_seq', :max_id)"),
+            {"max_id": max_company_id}
+        )
+        logger.info("✅ Companies sequence updated.")
+        
+        # ---------- Insert users ----------
         logger.info(f"Inserting {len(USERS)} users...")
         for u in USERS:
             db_sql.execute(
                 text("""
-                    INSERT INTO users (id, company_id, name, email, role, created_at) 
-                    VALUES (:id, :company_id, :name, :email, :role, :created_at)
+                    INSERT INTO users (id, company_id, name, email, hashed_password, role, created_at) 
+                    VALUES (:id, :company_id, :name, :email, :hashed_password, :role, :created_at)
                 """),
                 {
                     "id": u["id"],
                     "company_id": u["company_id"],
                     "name": u["name"],
                     "email": u["email"],
+                    "hashed_password": u["hashed_password"],
                     "role": u["role"],
                     "created_at": get_date(u["created_at"])
                 }
             )
         
+        # ✅ Update users sequence to the highest used id
+        max_user_id = db_sql.execute(text("SELECT MAX(id) FROM users")).scalar()
+        db_sql.execute(
+            text("SELECT setval('users_id_seq', :max_id)"),
+            {"max_id": max_user_id}
+        )
+        logger.info("✅ Users sequence updated.")
+        
+        # ✅ Commit all SQL changes (data + sequence adjustments)
         db_sql.commit()
         logger.info("✅ SQL: Companies and users inserted successfully.")
         

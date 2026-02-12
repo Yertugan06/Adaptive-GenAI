@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     #JWT
     SECRET_KEY : str
 
+    BACKEND_CORS_ORIGINS: list[str] = [
+        "http://127.0.0.1:5500"
+    ]
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
         env_file_encoding="utf-8",

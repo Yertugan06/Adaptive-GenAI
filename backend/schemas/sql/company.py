@@ -13,4 +13,3 @@ class Company(Base):
 
     # Relationships
     users = relationship("User", back_populates="company")
-    metrics = relationship("CompanyAiMetric", back_populates="company")
