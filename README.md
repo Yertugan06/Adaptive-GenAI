@@ -123,8 +123,8 @@ This project is suitable for **B2B or B2G AI support systems** where privacy, ac
 | `/api/v1/prompts/submit`                 | POST   | Submit a query                 |
 | `/api/v1/feedback/submit`                | POST   | Submit user feedback           |
 | `/api/v1/feedback/history`               | GET    | Retrieve user feedback history |
-| `/api/v1/responses/responses/{res_id}`   | GET    | Get AI response                |
-| `/api/v1/responses/responses/search`     | GET    | Search AI responses            |
+| `/api/v1/responses/{res_id}`   | GET    | Get AI response                |
+| `/api/v1/responses/search`     | GET    | Search AI responses            |
 | `/api/v1/analytics/company/{company_id}` | GET    | Company dashboard analytics    |
 
 ---
