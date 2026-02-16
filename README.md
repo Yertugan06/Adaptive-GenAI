@@ -6,7 +6,7 @@
 **Author:** Yertugan Tb (Backend), Murat (Frontend)
 **License:** MIT
 
-A **hybrid Retrieval-Augmented Generation (RAG) system** for enterprise-grade question answering. Combines local LLM inference, vector search, and feedback-based adaptive AI responses for multi-tenant environments.
+A **hybrid Retrieval-Augmented Generation (RAG) system** for enterprise-grade question answering. Combines Google Gemini API, vector search, and feedback-based adaptive AI responses for multi-tenant environments.
 
 ---
 
@@ -54,7 +54,7 @@ This project is suitable for **B2B or B2G AI support systems** where privacy, ac
 
 4. **LLM Generation**
 
-   * Provide the context + prompt to a local LLM
+   * Provide the context + prompt to a Google Gemini API
    * Store AI response in MongoDB for reuse
 
 5. **Feedback Loop**
@@ -92,7 +92,7 @@ This project is suitable for **B2B or B2G AI support systems** where privacy, ac
  ┣ 📂api/v1          # FastAPI endpoints (auth, prompts, responses, feedback, analytics)
  ┣ 📂core            # DB connections, configuration
  ┣ 📂crud            # MongoDB + PostgreSQL CRUD operations
- ┣ 📂ml_models       # Local LLM models, bi-encoder, reranker
+ ┣ 📂ml_models       # bi-encoder, reranker
  ┣ 📂schemas         # Pydantic models for NoSQL and SQL
  ┣ 📂services        # ML pipelines, RAG, embedding, LLM calls, feedback
  ┣ 📂storage         # Raw PDFs and document chunks
